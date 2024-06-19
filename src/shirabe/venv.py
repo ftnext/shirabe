@@ -9,15 +9,18 @@ class ShirabeEnvBuilder(EnvBuilder):
             os.path.dirname(env_dir), "requirements.txt"
         )
         if os.path.exists(requirements_file):
-            self._call_new_python(
-                context,
-                "-m",
-                "pip",
-                "install",
-                "--no-deps",
-                "-r",
-                requirements_file,
-            )
+            self._install_requirements(context, requirements_file)
+
+    def _install_requirements(self, context, requirements_file):
+        self._call_new_python(
+            context,
+            "-m",
+            "pip",
+            "install",
+            "--no-deps",
+            "-r",
+            requirements_file,
+        )
 
 
 def main():
