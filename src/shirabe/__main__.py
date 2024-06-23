@@ -1,3 +1,3 @@
-from shirabe.venv import main
+from shirabe.cli import main
 
 main()
