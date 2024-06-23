@@ -11,7 +11,7 @@ class ShirabeEnvBuilder(EnvBuilder):
         if os.path.exists(requirements_file):
             self._install_requirements(context, requirements_file)
 
-    def _install_requirements(self, context, requirements_file):
+    def _install_requirements(self, context, requirements_file: str):
         self._call_new_python(
             context,
             "-m",
@@ -21,6 +21,11 @@ class ShirabeEnvBuilder(EnvBuilder):
             "-r",
             requirements_file,
         )
+
+    def _call_new_python(self, context, *py_args, **kwargs):
+        # Avoid for mypy to raise [attr-defined] error
+        # >error: "ShirabeEnvBuilder" has no attribute "_call_new_python"
+        return super()._call_new_python(context, *py_args, **kwargs)
 
 
 def main():
