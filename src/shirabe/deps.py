@@ -1,5 +1,7 @@
-import subprocess
 from pathlib import Path
+
+import click
+from piptools.scripts import compile
 
 
 class DependenciesCompiler:
@@ -8,4 +10,4 @@ class DependenciesCompiler:
 
     def run(self):
         if not (self.work_dir / "requirements.txt").exists():
-            subprocess.run(["python", "-m", "piptools", "compile"])
+            click.Context(compile.cli).invoke(compile.cli)
