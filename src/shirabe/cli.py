@@ -12,10 +12,18 @@ def main():
         metavar="ENV_DIR",
         help="A directory to create the environment in.",
     )
+    parser.add_argument(
+        "--with-pip",
+        action="store_true",
+        help=(
+            "Skips installing in the virtual environment "
+            "(pip is not bootstrapped by default)"
+        ),
+    )
     options = parser.parse_args()
 
     working_dir = Path.cwd()
     DependenciesCompiler(working_dir).run()
 
-    builder = ShirabeEnvBuilder(with_pip=True)
+    builder = ShirabeEnvBuilder(with_pip=options.with_pip)
     builder.create(options.dir)

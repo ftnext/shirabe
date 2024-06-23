@@ -1,4 +1,8 @@
+import os
 import os.path
+import subprocess
+import sys
+import tempfile
 from venv import EnvBuilder
 
 
@@ -12,7 +16,7 @@ class ShirabeEnvBuilder(EnvBuilder):
             self._install_requirements(context, requirements_file)
 
     def _install_requirements(self, context, requirements_file: str):
-        self._call_new_python(
+        commands = [
             context,
             "-m",
             "pip",
@@ -20,12 +24,41 @@ class ShirabeEnvBuilder(EnvBuilder):
             "--no-deps",
             "-r",
             requirements_file,
+        ]
+        if self.with_pip:
+            self._call_new_python(*commands)
+            return
+
+        # ref: https://github.com/astral-sh/rye/blob/0.34.0/rye/src/sync.rs#L270-L274  # NOQA: E501
+        shirabe_run_python = sys.executable
+        hoge = os.path.dirname(os.path.dirname(shirabe_run_python))
+        python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+        shirabe_site_packages = os.path.join(
+            hoge, f"lib/python{python_version}/site-packages"
         )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            os.symlink(
+                os.path.join(shirabe_site_packages, "pip"),
+                os.path.join(tmpdir, "pip"),
+            )
+            os.environ["PYTHONPATH"] = tmpdir
+            self._call_new_python_keep_pythonpath(*commands)
 
     def _call_new_python(self, context, *py_args, **kwargs):
         # Avoid for mypy to raise [attr-defined] error
         # >error: "ShirabeEnvBuilder" has no attribute "_call_new_python"
         return super()._call_new_python(context, *py_args, **kwargs)
+
+    def _call_new_python_keep_pythonpath(self, context, *py_args, **kwargs):
+        # Tweak https://github.com/python/cpython/blob/v3.12.4/Lib/venv/__init__.py#L369-L382  # NOQA: E501
+        args = [context.env_exec_cmd, *py_args]
+        kwargs["env"] = env = os.environ.copy()
+        env["VIRTUAL_ENV"] = context.env_dir
+        env.pop("PYTHONHOME", None)
+        # env.pop("PYTHONPATH", None)  # Keep PYTHONPATH
+        kwargs["cwd"] = context.env_dir
+        kwargs["executable"] = context.env_exec_cmd
+        subprocess.check_output(args, **kwargs)
 
 
 def main():
