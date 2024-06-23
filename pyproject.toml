@@ -26,6 +26,9 @@ dynamic = ["version"]
 [project.urls]
 Repository = "https://github.com/ftnext/shirabe"
 
+[project.scripts]
+shirabe = "shirabe.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "taskipy",
