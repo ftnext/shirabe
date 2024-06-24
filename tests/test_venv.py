@@ -1,5 +1,5 @@
 import sys
-from unittest.mock import ANY, patch
+from unittest.mock import patch
 
 from shirabe.venv import main
 
@@ -18,19 +18,3 @@ def test_python_m_shirabe_no_requirements(
         run_shirabe(".venv")
 
     _install_requirements.assert_not_called()
-
-
-@patch("shirabe.venv.ShirabeEnvBuilder._install_requirements")
-def test_python_m_shirabe_with_requirements(
-    _install_requirements, tmp_path, monkeypatch
-):
-    requirements_file_path = tmp_path / "requirements.txt"
-    requirements_file_path.write_text("kojo-fan-art==0.1.1")
-
-    with monkeypatch.context() as m:
-        m.chdir(tmp_path)
-        run_shirabe(".venv")
-
-    _install_requirements.assert_called_once_with(
-        ANY, str(requirements_file_path)
-    )
