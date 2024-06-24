@@ -30,11 +30,14 @@ class ShirabeEnvBuilder(EnvBuilder):
             return
 
         # ref: https://github.com/astral-sh/rye/blob/0.34.0/rye/src/sync.rs#L270-L274  # NOQA: E501
-        shirabe_run_python = sys.executable
-        hoge = os.path.dirname(os.path.dirname(shirabe_run_python))
+        shirabe_running_python = sys.executable
+        shirabe_running_python_root = os.path.dirname(
+            os.path.dirname(shirabe_running_python)
+        )
         python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
         shirabe_site_packages = os.path.join(
-            hoge, f"lib/python{python_version}/site-packages"
+            shirabe_running_python_root,
+            f"lib/python{python_version}/site-packages",
         )
         with tempfile.TemporaryDirectory() as tmpdir:
             os.symlink(
