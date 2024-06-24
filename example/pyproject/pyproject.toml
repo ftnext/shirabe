@@ -1,0 +1,8 @@
+[project]
+name = "unko"
+version = "0.1"
+dependencies = ["kojo-fan-art"]
+
+# TODO: Not support yet
+[project.optional-dependencies]
+dev = ["pytest"]
