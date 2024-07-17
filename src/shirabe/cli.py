@@ -7,12 +7,15 @@ from shirabe.venv import ShirabeEnvBuilder
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    subparsers = parser.add_subparsers()
+
+    alpha_parser = subparsers.add_parser("alpha")
+    alpha_parser.add_argument(
         "dir",
         metavar="ENV_DIR",
         help="A directory to create the environment in.",
     )
-    parser.add_argument(
+    alpha_parser.add_argument(
         "--with-pip",
         action="store_true",
         help=(

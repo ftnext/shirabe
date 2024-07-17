@@ -7,7 +7,7 @@ from shirabe.cli import main
 
 
 def run_shirabe(venv_path):
-    with patch.object(sys, "argv", ["shirabe", venv_path]):
+    with patch.object(sys, "argv", ["shirabe", "alpha", venv_path]):
         main()
 
 
